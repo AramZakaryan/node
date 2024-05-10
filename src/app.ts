@@ -10,6 +10,7 @@ app.get('/', (req: Request, res: Response<string>) => {
 })
 
 app.use('/products', productRouter)
+
 app.use('/addresses', addressRouter)
 
 
