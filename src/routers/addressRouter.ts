@@ -1,10 +1,10 @@
 import {Request, Router} from "express";
 import {ResAddressesType, ResAddressType} from "../models/resAddressesModels";
-import {addresses} from "../db/db";
 import {ReqAddressesBodyType, ReqAddressesParamsBodyType, ReqAddressesParamsType} from "../models/reqAddressesModels";
 import {AddressType} from "../types";
 
 import {getResAddress} from "../utils/getResFunctions";
+import {addresses} from "../repositories/addressRepository";
 
 
 export const addressRouter = Router({})

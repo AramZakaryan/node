@@ -1,9 +1,9 @@
 import {Router} from "express";
 import {ReqProductsParamsType, ReqProductsQueryType} from "../models/reqProductsModels";
 import {ResProductsType, ResProductType} from "../models/resProductsModels";
-import {products} from "../db/db";
 
 import {getResProduct} from "../utils/getResFunctions";
+import {products} from "../repositories/productRepository";
 
 export const productRouter = Router({})
 
