@@ -1,9 +1,13 @@
 export type AddressType = {
-    id: number,
-    value: string,
+    id: number
+    value: string
     postalCode: string
 }
 
-export type ProductType = { title: string, quantity: number }
+export type ProductType = {
+    id: number
+    title: string
+    quantity: number
+}
 
 

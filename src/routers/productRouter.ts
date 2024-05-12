@@ -1,24 +1,42 @@
 import {Router} from "express";
-import {ReqProductsParamsType, ReqProductsQueryType} from "../models/reqProductsModels";
+import {
+    ReqProductsBodyType,
+    ReqProductsParamsBodyType,
+    ReqProductsParamsType,
+    ReqProductsQueryType
+} from "../models/reqProductsModels";
 import {ResProductsType, ResProductType} from "../models/resProductsModels";
-
-import {getResProduct} from "../utils/getResFunctions";
-import {products} from "../repositories/productRepository";
+import {productRepository} from "../repositories/productRepository";
 
 export const productRouter = Router({})
 
-productRouter.get('/',
-    (req: ReqProductsQueryType,
-     res: ResProductsType) => {
-        if (req.query.title) {
-            res.send(products.filter(p => p.title.indexOf(req.query.title) > -1).map(getResProduct))
-        } else {
-            res.send(products.map(getResProduct))
-        }
-    })
-productRouter.get('/:name',
-    (req: ReqProductsParamsType,
-     res: ResProductType) => {
-        const product = products.find(p => p.title === req.params.name)
-        product ? res.send(getResProduct(product)) : res.sendStatus(404)
-    })
+productRouter.get('/', (req: ReqProductsQueryType, res: ResProductsType) => {
+    const title = req.query.title
+    const products = productRepository.filterProducts(title)
+    res.send(products)
+})
+
+productRouter.get('/:title', (req: ReqProductsParamsType, res: ResProductType) => {
+    const title = req.params.title
+    const product = productRepository.findProduct(title)
+    product ? res.send(product) : res.sendStatus(404)
+})
+
+productRouter.delete('/:title', (req: ReqProductsParamsType, res: ResProductType) => {
+    const title = req.params.title
+    const isDeleted = productRepository.deleteProduct(title)
+    isDeleted ? res.sendStatus(204) : res.sendStatus(404)
+})
+
+productRouter.put('/:title', (req: ReqProductsParamsBodyType, res: ResProductType) => {
+    const initialTitle = req.params.title
+    const finalTitle = req.body.title
+    const product = productRepository.updateProduct(initialTitle, finalTitle)
+    product ? res.status(201).json(product) : res.sendStatus(404)
+})
+
+productRouter.post('/', (req: ReqProductsBodyType, res: ResProductType) => {
+    const title = req.body.title
+    const product = productRepository.createProduct(title)
+    res.status(201).json(product)
+})

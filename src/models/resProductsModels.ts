@@ -1,7 +1,7 @@
 import {Response} from "express";
 import {ProductType} from "../types";
 
-/** ZA: Model of Product for Frontend*/
+/** ZA: Model of Product for Client*/
 export type ResProductModel = { title: string}
 
 /** ZA: ResProductType based on ProductType*/

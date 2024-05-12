@@ -1,10 +1,12 @@
 import request from "supertest"
-import {ReqAddressesBodyModel} from "../src/models/reqAddressesModels";
-import {ResAddressesType, ResAddressModel, ResAddressType} from "../src/models/resAddressesModels";
+import {ReqAddressBodyModel} from "../src/models/reqAddressesModels";
+import {ResAddressModel} from "../src/models/resAddressesModels";
 import {app} from "../src/app";
+import {ResProductModel} from "../src/models/resProductsModels";
+import {ReqProductBodyModel, ReqProductsBodyType} from "../src/models/reqProductsModels";
 
 
-describe("/api",  () => {
+describe("/api", () => {
     it("All products should be received correctly", async () => {
         await request(app)
             .get('/products')
@@ -42,11 +44,86 @@ describe("/api",  () => {
             )
     })
 
-
     it("Should return 404 for not existing product", async () => {
         await request(app)
             .get('/products/cucumber')
             .expect(404)
+    })
+
+    it("Product should be deleted correctly", async () => {
+        const title = 'orange'
+        const initialProducts:ResProductModel[] = await request(app).get('/products').then(res=>res.body)
+        expect(initialProducts.find(p=>p.title===title)).toEqual({title: "orange"})
+
+        await request(app)
+            .delete(`/products/${title}`)
+            .expect(204)
+
+        const finalProducts:ResProductModel[] = await request(app).get('/products').then(res=>res.body)
+        expect(finalProducts.length).toBe(initialProducts.length - 1)
+        expect(finalProducts.find(p=>p.title===title)).toBeUndefined()
+
+    })
+
+    it("Should return 404 for not existing product in case of delete", async () => {
+
+        await request(app)
+            .delete('/products/cucumber')
+            .expect(404)
+
+    })
+
+
+
+
+    it("Product title (name) should be updated correctly", async () => {
+
+        const initialTitle="tomato"
+        const finalTitle="potato"
+
+        const reqProductBody: ReqProductBodyModel = {title: finalTitle}
+        const resProduct: ResProductModel = reqProductBody
+
+        // sub-test 1
+        await request(app)
+            .put(`/products/${initialTitle}`)
+            .send(reqProductBody)
+            .expect(resProduct)
+
+        // sub-test 2
+        const resProductGet: ResProductModel[]= await request(app).get('/products').then(res=>res.body)
+        expect(resProductGet.find(p=>p.title===finalTitle)).not.toBeUndefined()
+    })
+
+    // it("Should return 404 for not existing address in case of put", async () => {
+    //
+    //     await request(app)
+    //         .put('/addresses/222')
+    //         .expect(404)
+    //
+    // })
+
+
+
+
+
+
+    it("Should create new product", async () => {
+
+        const initialState: ResProductModel[] = await request(app).get('/products').then(res => res.body)
+
+        const reqProductBody: ResProductModel = {title: "Some Product"}
+        const resProduct: ResProductModel = reqProductBody
+
+        await request(app)
+            .post('/products')
+            .send(reqProductBody)
+            .expect(201,
+                resProduct)
+
+        const finalState: ResProductModel[] = await request(app).get('/products').then(res => res.body)
+        expect(finalState.length).toBe(initialState.length + 1)
+        expect(finalState[finalState.length-1]).toEqual(resProduct)
     })
 
     it("All addresses should be received correctly", async () => {
@@ -79,8 +156,8 @@ describe("/api",  () => {
             .delete('/addresses/2')
             .expect(204)
 
-        const finalAddress = await request(app).get('/addresses')
-        expect(finalAddress.body.length).toBe(initialAddresses.body.length - 1)
+        const finalAddresses = await request(app).get('/addresses')
+        expect(finalAddresses.body.length).toBe(initialAddresses.body.length - 1)
     })
 
     it("Should return 404 for not existing address in case of delete", async () => {
@@ -94,7 +171,7 @@ describe("/api",  () => {
 
     it("Address value should be updated correctly", async () => {
 
-        const reqAddressBody: ReqAddressesBodyModel = {value: "Some Address 333"}
+        const reqAddressBody: ReqAddressBodyModel = {value: "Some Address 333"}
         const resAddress: ResAddressModel = {...reqAddressBody, id: 1}
 
         // sub-test 1
@@ -122,7 +199,7 @@ describe("/api",  () => {
         const initialState: ResAddressModel[] = await request(app).get('/addresses').then(res => res.body)
         const maxId = initialState.reduce((mId, a) => mId < a.id ? a.id : mId, 0);
 
-        const reqAddressBody: ReqAddressesBodyModel = {value: "Some Street 100"}
+        const reqAddressBody: ReqAddressBodyModel = {value: "Some Street 100"}
         const resAddress: ResAddressModel = {...reqAddressBody, id: maxId + 1}
 
 
@@ -132,7 +209,7 @@ describe("/api",  () => {
             .expect(201,
                 resAddress)
 
-        const finalState:ResAddressModel[] = await request(app).get('/addresses').then(res=>res.body)
+        const finalState: ResAddressModel[] = await request(app).get('/addresses').then(res => res.body)
         expect(finalState.length).toBe(initialState.length + 1)
 
     })
