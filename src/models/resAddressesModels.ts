@@ -1,5 +1,6 @@
 import {Response} from "express";
 import {AddressType} from "../types";
+import {ValidationError} from "express-validator";
 
 /** ZA: Model of Address for Frontend*/
 export type ResAddressModel = {
@@ -9,7 +10,7 @@ export type ResAddressModel = {
 
 
 /** ZA: ResAddressType based on AddressType*/
-export type ResAddressType = Response<ResAddressModel>
+export type ResAddressType = Response<ResAddressModel | { errors: ValidationError[] }>
 
 /** ZA: ResAddressesType based on array of AddressType */
 export type ResAddressesType = Response<ResAddressModel[]>

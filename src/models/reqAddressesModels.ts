@@ -10,7 +10,7 @@ export type ReqAddressBodyModel = { value: string }
 export type ReqAddressesParamsType = Request<ReqAddressParamsModel>
 
 /** ZA: ReqAddressesBodyType with body { value: string } */
-export type ReqAddressesBodyType = Request<unknown, unknown, ReqAddressBodyModel>
+export type ReqAddressesBodyType = Request<undefined, undefined, ReqAddressBodyModel>
 
 /** ZA: ReqAddressesParamsBodyType with params { id: string } and with body { value: string } */
-export type ReqAddressesParamsBodyType = Request<ReqAddressParamsModel, unknown, ReqAddressBodyModel, unknown>
+export type ReqAddressesParamsBodyType = Request<ReqAddressParamsModel, undefined, ReqAddressBodyModel, undefined>

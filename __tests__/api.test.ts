@@ -186,11 +186,11 @@ describe("/api", () => {
     })
 
     it("Should return 404 for not existing address in case of put", async () => {
-
+        const reqAddressBody: ReqAddressBodyModel = {value: "Some Address 333"}
         await request(app)
             .put('/addresses/222')
+            .send(reqAddressBody)
             .expect(404)
-
     })
 
 
