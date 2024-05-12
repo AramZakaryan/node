@@ -4,6 +4,15 @@ exports.productRouter = void 0;
 const express_1 = require("express");
 const productRepository_1 = require("../repositories/productRepository");
 exports.productRouter = (0, express_1.Router)({});
+exports.productRouter.use('/:title', cigaretteMiddleware);
+function cigaretteMiddleware(req, res, next) {
+    if (req.params.title === "cigarette") {
+        res.status(403).json({ title: "We are against cigarettes." });
+    }
+    else {
+        next();
+    }
+}
 exports.productRouter.get('/', (req, res) => {
     const title = req.query.title;
     const products = productRepository_1.productRepository.filterProducts(title);
