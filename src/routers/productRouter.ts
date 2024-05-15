@@ -6,7 +6,7 @@ import {
     ReqProductsQueryType
 } from "../models/reqProductsModels";
 import {ResProductsType, ResProductType} from "../models/resProductsModels";
-import {productRepositoryMemory} from "../repositories/productRepositoryMemory";
+import {productRepository} from "../repositories/productRepositoryDb";
 import {validateBody} from "../utils/middlewares/validateBody";
 import {validateBodyFailed} from "../utils/middlewares/validateBodyFailed";
 
@@ -22,50 +22,40 @@ function cigaretteMiddleware(req: ReqProductsParamsType, res: ResProductType, ne
     }
 }
 
-productRouter.get('/', (req: ReqProductsQueryType, res: ResProductsType) => {
+productRouter.get('/', async (req: ReqProductsQueryType, res: ResProductsType) => {
     const title = req.query.title
-    const products = productRepositoryMemory.filterProducts(title)
+    const products = await productRepository.filterProducts(title)
     res.send(products)
 })
 
-productRouter.get('/:title', (req: ReqProductsParamsType, res: ResProductType) => {
+productRouter.get('/:title', async (req: ReqProductsParamsType, res: ResProductType) => {
     const title = req.params.title
-    const product = productRepositoryMemory.findProduct(title)
+    const product = await productRepository.findProduct(title)
     product ? res.send(product) : res.sendStatus(404)
 })
 
 
-productRouter.delete('/:title', (req: ReqProductsParamsType, res: ResProductType) => {
+productRouter.delete('/:title', async (req: ReqProductsParamsType, res: ResProductType) => {
     const title = req.params.title
-    const isDeleted = productRepositoryMemory.deleteProduct(title)
+    const isDeleted = await productRepository.deleteProduct(title)
     isDeleted ? res.sendStatus(204) : res.sendStatus(404)
 })
 
 productRouter.put('/:title',
     validateBody("title"),
     validateBodyFailed,
-    (req: ReqProductsParamsBodyType, res: ResProductType) => {
-        // const valResult = validationResult(req)
-        // if (valResult.isEmpty()) {
+    async (req: ReqProductsParamsBodyType, res: ResProductType) => {
         const initialTitle = req.params.title
         const finalTitle = req.body.title
-        const product = productRepositoryMemory.updateProduct(initialTitle, finalTitle)
+        const product = await productRepository.updateProduct(initialTitle, finalTitle)
         product ? res.status(201).json(product) : res.sendStatus(404)
-        // } else {
-        //     res.send({errors: valResult.array()})
-        // }
     })
 
 productRouter.post('/',
     validateBody("title"),
     validateBodyFailed,
-    (req: ReqProductsBodyType, res: ResProductType) => {
-        // const valResult = validationResult(req)
-        // if (valResult.isEmpty()) {
-            const title = req.body.title
-            const product = productRepositoryMemory.createProduct(title)
-            res.status(201).json(product)
-        // } else {
-        //     res.send({errors: valResult.array()})
-        // }
+    async (req: ReqProductsBodyType, res: ResProductType) => {
+        const title = req.body.title
+        const product = await productRepository.createProduct(title)
+        product ? res.status(201).json(product) : res.sendStatus(400)
     })

@@ -7,7 +7,7 @@ app.use(express.json()) // middleware for json
 
 app.get('/', (req: Request, res: Response<string>) => {
     const start = performance.now()
-    while(performance.now()-start<1500){}
+    // while(performance.now()-start<1500){}
     res.send('Hello World!')
 })
 
