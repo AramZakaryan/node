@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productRouter = void 0;
 const express_1 = require("express");
-const productRepository_1 = require("../repositories/productRepository");
+const productRepositoryMemory_1 = require("../repositories/productRepositoryMemory");
 const validateBody_1 = require("../utils/middlewares/validateBody");
 const validateBodyFailed_1 = require("../utils/middlewares/validateBodyFailed");
 exports.productRouter = (0, express_1.Router)({});
@@ -17,17 +17,17 @@ function cigaretteMiddleware(req, res, next) {
 }
 exports.productRouter.get('/', (req, res) => {
     const title = req.query.title;
-    const products = productRepository_1.productRepository.filterProducts(title);
+    const products = productRepositoryMemory_1.productRepositoryMemory.filterProducts(title);
     res.send(products);
 });
 exports.productRouter.get('/:title', (req, res) => {
     const title = req.params.title;
-    const product = productRepository_1.productRepository.findProduct(title);
+    const product = productRepositoryMemory_1.productRepositoryMemory.findProduct(title);
     product ? res.send(product) : res.sendStatus(404);
 });
 exports.productRouter.delete('/:title', (req, res) => {
     const title = req.params.title;
-    const isDeleted = productRepository_1.productRepository.deleteProduct(title);
+    const isDeleted = productRepositoryMemory_1.productRepositoryMemory.deleteProduct(title);
     isDeleted ? res.sendStatus(204) : res.sendStatus(404);
 });
 exports.productRouter.put('/:title', (0, validateBody_1.validateBody)("title"), validateBodyFailed_1.validateBodyFailed, (req, res) => {
@@ -35,7 +35,7 @@ exports.productRouter.put('/:title', (0, validateBody_1.validateBody)("title"), 
     // if (valResult.isEmpty()) {
     const initialTitle = req.params.title;
     const finalTitle = req.body.title;
-    const product = productRepository_1.productRepository.updateProduct(initialTitle, finalTitle);
+    const product = productRepositoryMemory_1.productRepositoryMemory.updateProduct(initialTitle, finalTitle);
     product ? res.status(201).json(product) : res.sendStatus(404);
     // } else {
     //     res.send({errors: valResult.array()})
@@ -45,7 +45,7 @@ exports.productRouter.post('/', (0, validateBody_1.validateBody)("title"), valid
     // const valResult = validationResult(req)
     // if (valResult.isEmpty()) {
     const title = req.body.title;
-    const product = productRepository_1.productRepository.createProduct(title);
+    const product = productRepositoryMemory_1.productRepositoryMemory.createProduct(title);
     res.status(201).json(product);
     // } else {
     //     res.send({errors: valResult.array()})

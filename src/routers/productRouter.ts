@@ -6,7 +6,7 @@ import {
     ReqProductsQueryType
 } from "../models/reqProductsModels";
 import {ResProductsType, ResProductType} from "../models/resProductsModels";
-import {productRepository} from "../repositories/productRepository";
+import {productRepositoryMemory} from "../repositories/productRepositoryMemory";
 import {validateBody} from "../utils/middlewares/validateBody";
 import {validateBodyFailed} from "../utils/middlewares/validateBodyFailed";
 
@@ -24,20 +24,20 @@ function cigaretteMiddleware(req: ReqProductsParamsType, res: ResProductType, ne
 
 productRouter.get('/', (req: ReqProductsQueryType, res: ResProductsType) => {
     const title = req.query.title
-    const products = productRepository.filterProducts(title)
+    const products = productRepositoryMemory.filterProducts(title)
     res.send(products)
 })
 
 productRouter.get('/:title', (req: ReqProductsParamsType, res: ResProductType) => {
     const title = req.params.title
-    const product = productRepository.findProduct(title)
+    const product = productRepositoryMemory.findProduct(title)
     product ? res.send(product) : res.sendStatus(404)
 })
 
 
 productRouter.delete('/:title', (req: ReqProductsParamsType, res: ResProductType) => {
     const title = req.params.title
-    const isDeleted = productRepository.deleteProduct(title)
+    const isDeleted = productRepositoryMemory.deleteProduct(title)
     isDeleted ? res.sendStatus(204) : res.sendStatus(404)
 })
 
@@ -49,7 +49,7 @@ productRouter.put('/:title',
         // if (valResult.isEmpty()) {
         const initialTitle = req.params.title
         const finalTitle = req.body.title
-        const product = productRepository.updateProduct(initialTitle, finalTitle)
+        const product = productRepositoryMemory.updateProduct(initialTitle, finalTitle)
         product ? res.status(201).json(product) : res.sendStatus(404)
         // } else {
         //     res.send({errors: valResult.array()})
@@ -63,7 +63,7 @@ productRouter.post('/',
         // const valResult = validationResult(req)
         // if (valResult.isEmpty()) {
             const title = req.body.title
-            const product = productRepository.createProduct(title)
+            const product = productRepositoryMemory.createProduct(title)
             res.status(201).json(product)
         // } else {
         //     res.send({errors: valResult.array()})

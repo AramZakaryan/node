@@ -9,13 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = require("./app");
-const db_1 = require("./repositories/db");
-const port = process.env.PORT || 3000;
-const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.runDb)();
-    app_1.app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(`Listening on port ${port}`);
-    }));
-});
-startApp();
+exports.runDb = exports.client = void 0;
+const mongodb_1 = require("mongodb");
+const mongoUri = process.env.mongoURI || "mongodb://0.0.0.0:27017";
+exports.client = new mongodb_1.MongoClient(mongoUri);
+function runDb() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield exports.client.connect();
+            yield exports.client.db("admin").command({ ping: 1 });
+            console.log("Successful connection to MongoDB ");
+        }
+        catch (_a) {
+            console.log("Cannot connect to MongoDB ");
+            yield exports.client.close();
+        }
+    });
+}
+exports.runDb = runDb;

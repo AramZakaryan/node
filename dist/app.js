@@ -10,6 +10,8 @@ const addressRouter_1 = require("./routers/addressRouter");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json()); // middleware for json
 exports.app.get('/', (req, res) => {
+    const start = performance.now();
+    while (performance.now() - start < 1500) { }
     res.send('Hello World!');
 });
 exports.app.use('/products', productRouter_1.productRouter);

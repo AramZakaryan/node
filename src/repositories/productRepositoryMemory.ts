@@ -5,7 +5,7 @@ export let products: ProductType[] = [
     {id: 1, title: "tomato", quantity: 10},
     {id: 2, title: "orange", quantity: 23}
 ]
-export const productRepository = {
+export const productRepositoryMemory = {
     filterProducts(title: string) {
         if (title) {
             return products.filter(p => p.title.indexOf(title) > -1).map(getResProduct)
