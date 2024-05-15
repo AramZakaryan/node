@@ -7,13 +7,13 @@ export type ReqProductParamsModel = { title: string }
 export type ReqProductBodyModel = { title: string }
 
 /** ZA: ReqProductsQueryModel with query { title: string } */
-export type ReqProductsQueryType= Request<unknown, unknown, unknown, { title: string }>
+export type ReqProductsQueryType= Request<undefined, undefined, undefined, { title: string }>
 
 /** ZA: ReqProductsParamsType with params { name: string } */
 export type ReqProductsParamsType = Request<ReqProductParamsModel>
 
 /** ZA: ReqProductsBodyType with body { title: string } */
-export type ReqProductsBodyType = Request<unknown, unknown, ReqProductBodyModel>
+export type ReqProductsBodyType = Request<undefined, undefined, ReqProductBodyModel>
 
 /** ZA: ReqProductsParamsBodyType with params { name: string } and with body { title: string */
-export type ReqProductsParamsBodyType = Request<ReqProductParamsModel, unknown, ReqProductBodyModel>
+export type ReqProductsParamsBodyType = Request<ReqProductParamsModel, undefined, ReqProductBodyModel>

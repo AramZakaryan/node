@@ -7,8 +7,8 @@ import {
 } from "../models/reqProductsModels";
 import {ResProductsType, ResProductType} from "../models/resProductsModels";
 import {productRepository} from "../repositories/productRepository";
-import {body, validationResult} from "express-validator";
-import {verifyBodyMiddleware} from "../utils/verifyBodyMiddleware";
+import {validateBody} from "../utils/middlewares/validateBody";
+import {validateBodyFailed} from "../utils/middlewares/validateBodyFailed";
 
 export const productRouter = Router({})
 
@@ -41,20 +41,31 @@ productRouter.delete('/:title', (req: ReqProductsParamsType, res: ResProductType
     isDeleted ? res.sendStatus(204) : res.sendStatus(404)
 })
 
-
 productRouter.put('/:title',
-    verifyBodyMiddleware("title"),
+    validateBody("title"),
+    validateBodyFailed,
     (req: ReqProductsParamsBodyType, res: ResProductType) => {
+        // const valResult = validationResult(req)
+        // if (valResult.isEmpty()) {
         const initialTitle = req.params.title
         const finalTitle = req.body.title
         const product = productRepository.updateProduct(initialTitle, finalTitle)
         product ? res.status(201).json(product) : res.sendStatus(404)
+        // } else {
+        //     res.send({errors: valResult.array()})
+        // }
     })
 
 productRouter.post('/',
-    verifyBodyMiddleware("title"),
+    validateBody("title"),
+    validateBodyFailed,
     (req: ReqProductsBodyType, res: ResProductType) => {
-        const title = req.body.title
-        const product = productRepository.createProduct(title)
-        res.status(201).json(product)
+        // const valResult = validationResult(req)
+        // if (valResult.isEmpty()) {
+            const title = req.body.title
+            const product = productRepository.createProduct(title)
+            res.status(201).json(product)
+        // } else {
+        //     res.send({errors: valResult.array()})
+        // }
     })

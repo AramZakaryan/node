@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.productRouter = void 0;
 const express_1 = require("express");
 const productRepository_1 = require("../repositories/productRepository");
-const verifyBodyMiddleware_1 = require("../utils/verifyBodyMiddleware");
+const validateBody_1 = require("../utils/middlewares/validateBody");
+const validateBodyFailed_1 = require("../utils/middlewares/validateBodyFailed");
 exports.productRouter = (0, express_1.Router)({});
 exports.productRouter.use('/:title', cigaretteMiddleware);
 function cigaretteMiddleware(req, res, next) {
@@ -29,14 +30,24 @@ exports.productRouter.delete('/:title', (req, res) => {
     const isDeleted = productRepository_1.productRepository.deleteProduct(title);
     isDeleted ? res.sendStatus(204) : res.sendStatus(404);
 });
-exports.productRouter.put('/:title', (0, verifyBodyMiddleware_1.verifyBodyMiddleware)("title"), (req, res) => {
+exports.productRouter.put('/:title', (0, validateBody_1.validateBody)("title"), validateBodyFailed_1.validateBodyFailed, (req, res) => {
+    // const valResult = validationResult(req)
+    // if (valResult.isEmpty()) {
     const initialTitle = req.params.title;
     const finalTitle = req.body.title;
     const product = productRepository_1.productRepository.updateProduct(initialTitle, finalTitle);
     product ? res.status(201).json(product) : res.sendStatus(404);
+    // } else {
+    //     res.send({errors: valResult.array()})
+    // }
 });
-exports.productRouter.post('/', (0, verifyBodyMiddleware_1.verifyBodyMiddleware)("title"), (req, res) => {
+exports.productRouter.post('/', (0, validateBody_1.validateBody)("title"), validateBodyFailed_1.validateBodyFailed, (req, res) => {
+    // const valResult = validationResult(req)
+    // if (valResult.isEmpty()) {
     const title = req.body.title;
     const product = productRepository_1.productRepository.createProduct(title);
     res.status(201).json(product);
+    // } else {
+    //     res.send({errors: valResult.array()})
+    // }
 });

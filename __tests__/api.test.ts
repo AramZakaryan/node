@@ -52,16 +52,16 @@ describe("/api", () => {
 
     it("Product should be deleted correctly", async () => {
         const title = 'orange'
-        const initialProducts:ResProductModel[] = await request(app).get('/products').then(res=>res.body)
-        expect(initialProducts.find(p=>p.title===title)).toEqual({title: "orange"})
+        const initialProducts: ResProductModel[] = await request(app).get('/products').then(res => res.body)
+        expect(initialProducts.find(p => p.title === title)).toEqual({title: "orange"})
 
         await request(app)
             .delete(`/products/${title}`)
             .expect(204)
 
-        const finalProducts:ResProductModel[] = await request(app).get('/products').then(res=>res.body)
+        const finalProducts: ResProductModel[] = await request(app).get('/products').then(res => res.body)
         expect(finalProducts.length).toBe(initialProducts.length - 1)
-        expect(finalProducts.find(p=>p.title===title)).toBeUndefined()
+        expect(finalProducts.find(p => p.title === title)).toBeUndefined()
 
     })
 
@@ -74,12 +74,10 @@ describe("/api", () => {
     })
 
 
-
-
     it("Product title (name) should be updated correctly", async () => {
 
-        const initialTitle="tomato"
-        const finalTitle="potato"
+        const initialTitle = "tomato"
+        const finalTitle = "potato"
 
         const reqProductBody: ReqProductBodyModel = {title: finalTitle}
         const resProduct: ResProductModel = reqProductBody
@@ -91,22 +89,9 @@ describe("/api", () => {
             .expect(resProduct)
 
         // sub-test 2
-        const resProductGet: ResProductModel[]= await request(app).get('/products').then(res=>res.body)
-        expect(resProductGet.find(p=>p.title===finalTitle)).not.toBeUndefined()
+        const resProductGet: ResProductModel[] = await request(app).get('/products').then(res => res.body)
+        expect(resProductGet.find(p => p.title === finalTitle)).not.toBeUndefined()
     })
-
-    // it("Should return 404 for not existing address in case of put", async () => {
-    //
-    //     await request(app)
-    //         .put('/addresses/222')
-    //         .expect(404)
-    //
-    // })
-
-
-
-
-
 
     it("Should create new product", async () => {
 
@@ -123,7 +108,61 @@ describe("/api", () => {
 
         const finalState: ResProductModel[] = await request(app).get('/products').then(res => res.body)
         expect(finalState.length).toBe(initialState.length + 1)
-        expect(finalState[finalState.length-1]).toEqual(resProduct)
+        expect(finalState[finalState.length - 1]).toEqual(resProduct)
+    })
+
+    it("Should return error where product request body value is empty, " +
+        "less than 3 or more than 20 letters" +
+        "(cases of post)", async () => {
+
+        let reqProductBody: ReqProductBodyModel
+
+        const errorEmpty = {
+            type: "field",
+            value: "",
+            msg: "Shall not be empty",
+            path: "title",
+            location: "body"
+        }
+
+        const errorMinMax = {
+            type: "field",
+            value: "",
+            msg: "length should be from 3 to 20",
+            path: "title",
+            location: "body"
+        }
+
+        // sub-test 1. Empty request body value
+
+        reqProductBody = {title: ""}
+
+        const error1put = await request(app).put('/products/tomato').send(reqProductBody).then(res => res.body)
+        expect(error1put).toEqual({errors: [errorEmpty, errorMinMax]})
+
+        const error1post = await request(app).post('/products').send(reqProductBody).then(res => res.body)
+        expect(error1post).toEqual({errors: [errorEmpty, errorMinMax]})
+
+        // sub-test 2. Request body value less than 3 letters
+
+        reqProductBody = {title: "a"}
+
+        const error2put = await request(app).put('/products/tomato').send(reqProductBody).then(res => res.body)
+        expect(error2put).toEqual({errors: [{...errorMinMax, value: "a"}]})
+
+        const error2post = await request(app).post('/products').send(reqProductBody).then(res => res.body)
+        expect(error2post).toEqual({errors: [{...errorMinMax, value: "a"}]})
+
+        // sub-test 3. Request body value more than 20 letters
+
+        reqProductBody = {title: "123456789012345678901"}
+
+        const error3put = await request(app).put('/products/tomato').send(reqProductBody).then(res => res.body)
+        expect(error3put).toEqual({errors: [{...errorMinMax, value: "123456789012345678901"}]})
+
+        const error3post = await request(app).post('/products').send(reqProductBody).then(res => res.body)
+        expect(error3post).toEqual({errors: [{...errorMinMax, value: "123456789012345678901"}]})
+
     })
 
     it("All addresses should be received correctly", async () => {
@@ -213,4 +252,61 @@ describe("/api", () => {
         expect(finalState.length).toBe(initialState.length + 1)
 
     })
+
+
+    it("Should return error where address request body value is empty, " +
+        "less than 3 or more than 20 letters" +
+        "(cases of post)", async () => {
+
+        let reqAddressBody: ReqAddressBodyModel
+
+        const errorEmpty = {
+            type: "field",
+            value: "",
+            msg: "Shall not be empty",
+            path: "value",
+            location: "body"
+        }
+
+        const errorMinMax = {
+            type: "field",
+            value: "",
+            msg: "length should be from 3 to 20",
+            path: "value",
+            location: "body"
+        }
+
+        // sub-test 1. Empty request body value
+
+        reqAddressBody = {value: ""}
+
+        const error1put = await request(app).put('/addresses/1').send(reqAddressBody).then(res => res.body)
+        expect(error1put).toEqual({errors: [errorEmpty, errorMinMax]})
+
+        const error1post = await request(app).post('/addresses').send(reqAddressBody).then(res => res.body)
+        expect(error1post).toEqual({errors: [errorEmpty, errorMinMax]})
+
+        // sub-test 2. Request body value less than 3 letters
+
+        reqAddressBody = {value: "a"}
+
+        const error2put = await request(app).put('/addresses/1').send(reqAddressBody).then(res => res.body)
+        expect(error2put).toEqual({errors: [{...errorMinMax, value: "a"}]})
+
+        const error2post = await request(app).post('/addresses').send(reqAddressBody).then(res => res.body)
+        expect(error2post).toEqual({errors: [{...errorMinMax, value: "a"}]})
+
+        // sub-test 3. Request body value more than 20 letters
+
+        reqAddressBody = {value: "123456789012345678901"}
+
+        const error3put = await request(app).put('/addresses/1').send(reqAddressBody).then(res => res.body)
+        expect(error3put).toEqual({errors: [{...errorMinMax, value: "123456789012345678901"}]})
+
+        const error3post = await request(app).post('/addresses').send(reqAddressBody).then(res => res.body)
+        expect(error3post).toEqual({errors: [{...errorMinMax, value: "123456789012345678901"}]})
+
+    })
+
+
 })
