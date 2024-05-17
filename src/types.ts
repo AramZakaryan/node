@@ -10,3 +10,8 @@ export type ProductType = {
     quantity: number
 }
 
+export type UserType = {
+    _id: string
+    name: string,
+    age: number
+}

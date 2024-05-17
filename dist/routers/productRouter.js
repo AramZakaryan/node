@@ -14,6 +14,7 @@ const express_1 = require("express");
 const validateBody_1 = require("../utils/middlewares/validateBody");
 const validateBodyFailed_1 = require("../utils/middlewares/validateBodyFailed");
 const productService_1 = require("../domain/productService");
+const productQueryRepository_1 = require("../repositories/productQueryRepository");
 exports.productRouter = (0, express_1.Router)({});
 exports.productRouter.use('/:title', cigaretteMiddleware);
 function cigaretteMiddleware(req, res, next) {
@@ -26,12 +27,12 @@ function cigaretteMiddleware(req, res, next) {
 }
 exports.productRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.query.title;
-    const products = yield productService_1.productService.filterProducts(title);
+    const products = yield productQueryRepository_1.productQueryRepository.filterProducts(title);
     res.send(products);
 }));
 exports.productRouter.get('/:title', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.params.title;
-    const product = yield productService_1.productService.findProduct(title);
+    const product = yield productQueryRepository_1.productQueryRepository.findProduct(title);
     product ? res.send(product) : res.sendStatus(404);
 }));
 exports.productRouter.delete('/:title', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

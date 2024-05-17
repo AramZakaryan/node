@@ -10,6 +10,7 @@ import {productRepository} from "../repositories/productRepositoryDb";
 import {validateBody} from "../utils/middlewares/validateBody";
 import {validateBodyFailed} from "../utils/middlewares/validateBodyFailed";
 import {productService} from "../domain/productService";
+import {productQueryRepository} from "../repositories/productQueryRepository";
 
 export const productRouter = Router({})
 
@@ -25,13 +26,13 @@ function cigaretteMiddleware(req: ReqProductsParamsType, res: ResProductType, ne
 
 productRouter.get('/', async (req: ReqProductsQueryType, res: ResProductsType) => {
     const title = req.query.title
-    const products = await productService.filterProducts(title)
+    const products = await productQueryRepository.filterProducts(title)
     res.send(products)
 })
 
 productRouter.get('/:title', async (req: ReqProductsParamsType, res: ResProductType) => {
     const title = req.params.title
-    const product = await productService.findProduct(title)
+    const product = await productQueryRepository.findProduct(title)
     product ? res.send(product) : res.sendStatus(404)
 })
 

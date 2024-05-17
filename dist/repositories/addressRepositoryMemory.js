@@ -8,11 +8,11 @@ exports.addresses = [
 ];
 exports.addressRepositoryMemory = {
     fetchAddresses() {
-        return exports.addresses.map(getResFunctions_1.getResAddress);
+        return exports.addresses.map(getResFunctions_1.AddressMapper);
     },
     findAddress(id) {
         const address = exports.addresses.find(a => a.id === id);
-        return address && (0, getResFunctions_1.getResAddress)(address);
+        return address && (0, getResFunctions_1.AddressMapper)(address);
     },
     deleteAddress(id) {
         const arrayId = exports.addresses.findIndex(a => a.id === id);
@@ -25,13 +25,13 @@ exports.addressRepositoryMemory = {
         const address = exports.addresses.find(a => a.id === id);
         if (address) {
             address.value = newValue;
-            return (0, getResFunctions_1.getResAddress)(address);
+            return (0, getResFunctions_1.AddressMapper)(address);
         }
     },
     createAddress(value) {
         const maxId = exports.addresses.reduce((mId, a) => mId < a.id ? a.id : mId, 0);
         const address = { id: maxId + 1, value, postalCode: "000000" };
         exports.addresses.push(address);
-        return (0, getResFunctions_1.getResAddress)(exports.addresses[exports.addresses.length - 1]);
+        return (0, getResFunctions_1.AddressMapper)(exports.addresses[exports.addresses.length - 1]);
     }
 };

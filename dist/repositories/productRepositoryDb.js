@@ -12,22 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.productRepository = void 0;
 const db_1 = require("./db");
 exports.productRepository = {
-    filterProducts(title) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.productsCollection
-                .find(title ? { title: { $regex: title } } : {})
-                .toArray();
-        });
-    },
-    findProduct(title) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.productsCollection
-                .findOne({ title });
-        });
-    },
     deleteProduct(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.productsCollection
+            const result = yield db_1.productCollection
                 .deleteOne({ title });
             if (result.deletedCount) {
                 return true;
@@ -36,10 +23,10 @@ exports.productRepository = {
     },
     updateProduct(initialTitle, finalTitle) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.productsCollection
+            const result = yield db_1.productCollection
                 .updateMany({ title: initialTitle }, { $set: { title: finalTitle } });
             if (result.modifiedCount) {
-                const product = yield db_1.productsCollection
+                const product = yield db_1.productCollection
                     .findOne({ title: finalTitle });
                 if (product) {
                     return product;
@@ -49,7 +36,7 @@ exports.productRepository = {
     },
     createProduct(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.productsCollection
+            const result = yield db_1.productCollection
                 .insertOne(product);
             if (result.insertedId) {
                 return true;

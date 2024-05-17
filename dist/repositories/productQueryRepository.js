@@ -9,28 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productService = void 0;
-const productRepositoryDb_1 = require("../repositories/productRepositoryDb");
+exports.productQueryRepository = void 0;
+const db_1 = require("./db");
 const getResFunctions_1 = require("../utils/getResFunctions");
-exports.productService = {
-    deleteProduct(title) {
+exports.productQueryRepository = {
+    filterProducts(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            return productRepositoryDb_1.productRepository.deleteProduct(title);
+            const products = yield db_1.productCollection
+                .find(title ? { title: { $regex: title } } : {})
+                .toArray();
+            return products.map(getResFunctions_1.ProductMapper);
         });
     },
-    updateProduct(initialTitle, finalTitle) {
+    findProduct(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            const product = yield productRepositoryDb_1.productRepository.updateProduct(initialTitle, finalTitle);
+            const product = yield db_1.productCollection
+                .findOne({ title });
             if (product) {
-                return (0, getResFunctions_1.ProductMapper)(product);
-            }
-        });
-    },
-    createProduct(title) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const product = { id: new Date().getTime(), title, quantity: 1 };
-            const result = yield productRepositoryDb_1.productRepository.createProduct(product);
-            if (result) {
                 return (0, getResFunctions_1.ProductMapper)(product);
             }
         });

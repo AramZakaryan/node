@@ -1,5 +1,5 @@
 import {AddressType} from "../types";
-import {getResAddress} from "../utils/getResFunctions";
+import {AddressMapper} from "../utils/getResFunctions";
 
 export let addresses: AddressType[] = [
     {id: 1, value: "Mira 7", postalCode: '1500'},
@@ -7,11 +7,11 @@ export let addresses: AddressType[] = [
 ]
 export const addressRepositoryMemory = {
     fetchAddresses() {
-        return addresses.map(getResAddress)
+        return addresses.map(AddressMapper)
     },
     findAddress(id: number) {
         const address = addresses.find(a => a.id === id)
-        return address && getResAddress(address)
+        return address && AddressMapper(address)
     },
     deleteAddress(id: number) {
         const arrayId = addresses.findIndex(a => a.id === id)
@@ -24,14 +24,14 @@ export const addressRepositoryMemory = {
         const address = addresses.find(a => a.id === id);
         if (address) {
             address.value = newValue
-           return getResAddress(address)
+           return AddressMapper(address)
         }
     },
     createAddress (value:string) {
         const maxId = addresses.reduce((mId, a) => mId < a.id ? a.id : mId, 0);
         const address: AddressType = {id: maxId + 1, value, postalCode: "000000"}
         addresses.push(address)
-        return getResAddress(addresses[addresses.length - 1])
+        return AddressMapper(addresses[addresses.length - 1])
     }
 
 }

@@ -1,5 +1,5 @@
 import {ProductType} from "../types";
-import {getResProduct} from "../utils/getResFunctions";
+import {ProductMapper} from "../utils/getResFunctions";
 import {ResProductModel} from "../models/resProductsModels";
 
 export let products: ProductType[] = [
@@ -9,15 +9,15 @@ export let products: ProductType[] = [
 export const _productRepository = {
     async filterProducts(title: string): Promise<ResProductModel[]> {
         if (title) {
-            return products.filter(p => p.title.indexOf(title) > -1).map(getResProduct)
+            return products.filter(p => p.title.indexOf(title) > -1).map(ProductMapper)
         } else {
-            return products.map(getResProduct)
+            return products.map(ProductMapper)
         }
     },
     async findProduct(title: string):Promise<ResProductModel | undefined>{
         const product = products.find(p => p.title === title)
         if (product) {
-            return getResProduct(product)
+            return ProductMapper(product)
         }
     },
     async deleteProduct(title: string):Promise<true | undefined> {
@@ -31,13 +31,13 @@ export const _productRepository = {
         const product = products.find(p => p.title === initialTitle);
         if (product) {
             product.title = finalTitle
-            return getResProduct(product)
+            return ProductMapper(product)
         }
     },
     async createProduct(title: string):Promise<ResProductModel> {
         const maxId = products.reduce((mId, p) => mId < p.id ? p.id : mId, 0);
         const product: ProductType = {id: maxId + 1, title, quantity: 1}
         products.push(product)
-        return getResProduct(products[products.length - 1])
+        return ProductMapper(products[products.length - 1])
     }
 }
