@@ -11,9 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productRouter = void 0;
 const express_1 = require("express");
-const productRepositoryDb_1 = require("../repositories/productRepositoryDb");
 const validateBody_1 = require("../utils/middlewares/validateBody");
 const validateBodyFailed_1 = require("../utils/middlewares/validateBodyFailed");
+const productService_1 = require("../domain/productService");
 exports.productRouter = (0, express_1.Router)({});
 exports.productRouter.use('/:title', cigaretteMiddleware);
 function cigaretteMiddleware(req, res, next) {
@@ -26,27 +26,27 @@ function cigaretteMiddleware(req, res, next) {
 }
 exports.productRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.query.title;
-    const products = yield productRepositoryDb_1.productRepository.filterProducts(title);
+    const products = yield productService_1.productService.filterProducts(title);
     res.send(products);
 }));
 exports.productRouter.get('/:title', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.params.title;
-    const product = yield productRepositoryDb_1.productRepository.findProduct(title);
+    const product = yield productService_1.productService.findProduct(title);
     product ? res.send(product) : res.sendStatus(404);
 }));
 exports.productRouter.delete('/:title', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.params.title;
-    const isDeleted = yield productRepositoryDb_1.productRepository.deleteProduct(title);
+    const isDeleted = yield productService_1.productService.deleteProduct(title);
     isDeleted ? res.sendStatus(204) : res.sendStatus(404);
 }));
 exports.productRouter.put('/:title', (0, validateBody_1.validateBody)("title"), validateBodyFailed_1.validateBodyFailed, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const initialTitle = req.params.title;
     const finalTitle = req.body.title;
-    const product = yield productRepositoryDb_1.productRepository.updateProduct(initialTitle, finalTitle);
+    const product = yield productService_1.productService.updateProduct(initialTitle, finalTitle);
     product ? res.status(201).json(product) : res.sendStatus(404);
 }));
 exports.productRouter.post('/', (0, validateBody_1.validateBody)("title"), validateBodyFailed_1.validateBodyFailed, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.body.title;
-    const product = yield productRepositoryDb_1.productRepository.createProduct(title);
+    const product = yield productService_1.productService.createProduct(title);
     product ? res.status(201).json(product) : res.sendStatus(400);
 }));

@@ -10,24 +10,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productRepository = void 0;
-const getResFunctions_1 = require("../utils/getResFunctions");
 const db_1 = require("./db");
 exports.productRepository = {
     filterProducts(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            const products = yield db_1.productsCollection
+            return yield db_1.productsCollection
                 .find(title ? { title: { $regex: title } } : {})
                 .toArray();
-            return products.map(getResFunctions_1.getResProduct);
         });
     },
     findProduct(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            const product = yield db_1.productsCollection
+            return yield db_1.productsCollection
                 .findOne({ title });
-            if (product) {
-                return (0, getResFunctions_1.getResProduct)(product);
-            }
         });
     },
     deleteProduct(title) {
@@ -47,26 +42,17 @@ exports.productRepository = {
                 const product = yield db_1.productsCollection
                     .findOne({ title: finalTitle });
                 if (product) {
-                    return (0, getResFunctions_1.getResProduct)(product);
+                    return product;
                 }
             }
         });
     },
-    createProduct(title) {
+    createProduct(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            const productsInitial = yield db_1.productsCollection
-                .find({})
-                .toArray();
-            const maxId = productsInitial.reduce((mId, p) => mId < p.id ? p.id : mId, 0);
-            // const maxId = _products.reduce((mId, p) => mId < p.id ? p.id : mId, 0);
-            const product = { id: maxId + 1, title, quantity: 1 };
             const result = yield db_1.productsCollection
                 .insertOne(product);
-            // _products.push(product)
-            const productAdded = yield db_1.productsCollection
-                .findOne({ id: maxId + 1 });
-            if (productAdded) {
-                return (0, getResFunctions_1.getResProduct)(productAdded);
+            if (result.insertedId) {
+                return true;
             }
         });
     }
