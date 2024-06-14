@@ -9,26 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userQueryRepository = void 0;
+exports.userRepository = void 0;
 const db_1 = require("./db");
-exports.userQueryRepository = {
-    filterUsers(page, count) {
+exports.userRepository = {
+    createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const pageNum = page ? +page : 1;
-            const countNum = count ? +count : page ? 1 : 0;
-            const skipNum = (pageNum - 1) * countNum;
-            const users = yield db_1.userCollection.find({})
-                // .sort({name: 1})
-                .skip(skipNum)
-                .limit(countNum)
-                .toArray();
-            if (users) {
-                return users.map(u => ({
-                    name: u.name,
-                    age: u.age
-                }));
-            }
-            return users;
+            const result = yield db_1.userCollection.insertOne(user);
+            if (result.insertedId)
+                return true;
+        });
+    },
+    findUser(login, pass) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.userCollection.findOne({ login });
         });
     }
 };

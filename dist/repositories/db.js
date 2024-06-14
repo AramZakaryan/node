@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runDb = exports.userCollection = exports.productCollection = void 0;
 const mongodb_1 = require("mongodb");
-const mongoUri = process.env.mongoURI || "mongodb://0.0.0.0:27017";
-const client = new mongodb_1.MongoClient(mongoUri);
+const settings_1 = require("../settings");
+const client = new mongodb_1.MongoClient(settings_1.mongoUri);
 const db = client.db("shop");
 exports.productCollection = db.collection("products");
 exports.userCollection = db.collection("users");

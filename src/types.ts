@@ -11,7 +11,13 @@ export type ProductType = {
 }
 
 export type UserType = {
-    _id: string
-    name: string,
-    age: number
+    name?: string,
+    age?: number,
+    login: string,
+    passHash: string,
 }
+
+export type UserDbType = UserType & {
+    _id: string
+}
+
