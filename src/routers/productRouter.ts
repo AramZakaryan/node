@@ -44,7 +44,6 @@ productRouter.delete('/:title', async (req: ReqProductsParamsType, res: ResProdu
 })
 
 productRouter.put('/:title',
-
     validateBody("title"),
     validateBodyFailed,
     async (req: ReqProductsParamsBodyType, res: ResProductType) => {
